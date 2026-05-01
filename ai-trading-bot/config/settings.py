@@ -28,35 +28,47 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 # =============================================================================
 # Trading Pairs (USDT Perpetual Futures)
 # =============================================================================
-TRADING_PAIRS = ["BTC/USDT:USDT", "ETH/USDT:USDT", "SOL/USDT:USDT"]
+# For small capital, focus on 1-2 pairs with good liquidity (BTC, ETH)
+TRADING_PAIRS = ["BTC/USDT:USDT", "ETH/USDT:USDT"]
 
 # =============================================================================
 # Leverage & Margin Configuration (per symbol)
+# OPTIMIZED FOR $100 CAPITAL: 5x leverage per pair
 # =============================================================================
 LEVERAGE_CONFIG = {
-    "BTC/USDT:USDT": 10,
-    "ETH/USDT:USDT": 10,
-    "SOL/USDT:USDT": 10,
+    "BTC/USDT:USDT": 5,
+    "ETH/USDT:USDT": 5,
+    "SOL/USDT:USDT": 5,
 }
 
 # Margin mode: "isolated" or "cross"
+# Isolated is safer - loss limited to position amount
 MARGIN_MODE = "isolated"
 
 # =============================================================================
-# Risk Management
+# Risk Management - OPTIMIZED FOR $100 CAPITAL
 # =============================================================================
-MAX_RISK_PER_TRADE = 0.02       # 2% of balance per trade
-MIN_RISK_REWARD_RATIO = 2.0     # Minimum R:R = 1:2
-MAX_DAILY_LOSS = 0.06           # 6% max daily loss → stop trading
-MAX_OPEN_POSITIONS = 3          # Max simultaneous positions
+# $100 capital = $2 per trade (2% risk)
+MAX_RISK_PER_TRADE = 0.02       # 2% of balance per trade = $2 per trade
+
+# Minimum R:R ratio (higher = more conservative)
+MIN_RISK_REWARD_RATIO = 2.0     # 1:2 ratio = need $4 profit for $2 risk
+
+# Max daily loss before stopping trades
+# For small capital, tighter limit = safer
+MAX_DAILY_LOSS = 0.10           # 10% max daily loss = $10 loss then STOP
+
+# Max simultaneous open positions
+# For small capital, fewer positions = less risk
+MAX_OPEN_POSITIONS = 2          # Max 2 trades at same time (reduced from 3)
 
 # =============================================================================
 # Strategy Configuration
 # =============================================================================
-TIMEFRAME = "15m"               # Candle timeframe
+TIMEFRAME = "15m"               # 15m timeframe = balance between noise & speed
 CANDLE_LIMIT = 100              # Number of candles to fetch
 
-# RSI Settings
+# RSI Settings (unchanged - these work well)
 RSI_PERIOD = 14
 RSI_OVERBOUGHT = 70
 RSI_OVERSOLD = 30
@@ -71,10 +83,11 @@ SUPERTREND_PERIOD = 10
 SUPERTREND_MULTIPLIER = 3.0
 
 # Minimum signal confluence score (out of 3)
+# Higher = more selective = fewer but better quality trades
 MIN_SIGNAL_SCORE = 2
 
 # =============================================================================
 # Bot Loop Configuration
 # =============================================================================
-LOOP_INTERVAL_SECONDS = 60      # Check every 60 seconds
-HEARTBEAT_INTERVAL = 3600       # Send heartbeat to Telegram every hour (seconds)
+LOOP_INTERVAL_SECONDS = 60      # Check every 60 seconds (balanced frequency)
+HEARTBEAT_INTERVAL = 3600       # Send heartbeat to Telegram every hour
