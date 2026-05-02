@@ -31,13 +31,35 @@ class OKXExchange:
 
     def _setup_leverage(self):
         """Set leverage and margin mode for all trading pairs."""
+        # Skip leverage setup in DEMO mode (OKX sandbox API has limitations)
+        if OKX_DEMO_MODE:
+            logger.info("⚠️ Skipping leverage setup in DEMO mode (OKX sandbox has API limitations)")
+            logger.info("   Leverage will use default. For production, set manually in OKX.")
+            return
+        
+        # In LIVE mode, attempt to set leverage
+        # NOTE: Leverage should be pre-configured in OKX account settings for best results
+        logger.info("🔧 Attempting to set leverage for trading pairs...")
+        
         for symbol, leverage in LEVERAGE_CONFIG.items():
             try:
                 self.exchange.set_margin_mode(MARGIN_MODE, symbol)
                 self.exchange.set_leverage(leverage, symbol)
-                logger.info(f"Set {symbol}: leverage={leverage}x, margin={MARGIN_MODE}")
+                logger.info(f"✅ Set {symbol}: leverage={leverage}x, margin={MARGIN_MODE}")
+            except ccxt.ExchangeError as e:
+                # OKX API error - leverage might need to be set manually
+                error_str = str(e)
+                if "should be between" in error_str or "lever" in error_str:
+                    logger.warning(
+                        f"⚠️ Could not set leverage for {symbol} via API.\n"
+                        f"   → Set manually in OKX account: Futures → {symbol} → Settings\n"
+                        f"   → Set Leverage to {leverage}x and Margin Mode to {MARGIN_MODE}\n"
+                        f"   → API Error: {e}"
+                    )
+                else:
+                    logger.warning(f"⚠️ Could not set leverage for {symbol}: {e}")
             except Exception as e:
-                logger.warning(f"Could not set leverage for {symbol}: {e}")
+                logger.warning(f"⚠️ Error setting leverage for {symbol}: {e}")
 
     def fetch_ohlcv(self, symbol: str, timeframe: str, limit: int = 100) -> list:
         """Fetch OHLCV candle data."""
@@ -56,6 +78,7 @@ class OKXExchange:
             return float(usdt_free)
         except Exception as e:
             logger.error(f"Error fetching balance: {e}")
+            logger.warning("⚠️ Returning $0.00 balance. Check API keys, permissions, and IP whitelist.")
             return 0.0
 
     def get_total_equity(self) -> float:
