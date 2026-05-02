@@ -27,13 +27,13 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 
 # =============================================================================
 # Trading Pairs (USDT Perpetual Futures)
+# OPTIMIZED FOR $100 CAPITAL: Focus on BTC and ETH (best liquidity)
 # =============================================================================
-# For small capital, focus on 1-2 pairs with good liquidity (BTC, ETH)
 TRADING_PAIRS = ["BTC/USDT:USDT", "ETH/USDT:USDT"]
 
 # =============================================================================
 # Leverage & Margin Configuration (per symbol)
-# OPTIMIZED FOR $100 CAPITAL: 5x leverage per pair
+# OPTIMIZED FOR $100 CAPITAL: 5x leverage (reduced from 10x for safety)
 # =============================================================================
 LEVERAGE_CONFIG = {
     "BTC/USDT:USDT": 5,
@@ -48,25 +48,25 @@ MARGIN_MODE = "isolated"
 # =============================================================================
 # Risk Management - OPTIMIZED FOR $100 CAPITAL
 # =============================================================================
-# $100 capital = $2 per trade (2% risk)
-MAX_RISK_PER_TRADE = 0.02       # 2% of balance per trade = $2 per trade
+# $100 capital with 2% per trade = $2 per trade
+MAX_RISK_PER_TRADE = 0.02       # 2% of balance per trade = $2 per trade on $100
 
 # Minimum R:R ratio (higher = more conservative)
 MIN_RISK_REWARD_RATIO = 2.0     # 1:2 ratio = need $4 profit for $2 risk
 
-# Max daily loss before stopping trades
-# For small capital, tighter limit = safer
-MAX_DAILY_LOSS = 0.10           # 10% max daily loss = $10 loss then STOP
+# Max daily loss before stopping trades for the day
+# For small capital, this is important to preserve account
+MAX_DAILY_LOSS = 0.10           # 10% max daily loss = $10 loss then STOP TRADING
 
 # Max simultaneous open positions
-# For small capital, fewer positions = less risk
+# For small capital, fewer positions = less overall risk exposure
 MAX_OPEN_POSITIONS = 2          # Max 2 trades at same time (reduced from 3)
 
 # =============================================================================
 # Strategy Configuration
 # =============================================================================
-TIMEFRAME = "15m"               # 15m timeframe = balance between noise & speed
-CANDLE_LIMIT = 100              # Number of candles to fetch
+TIMEFRAME = "15m"               # 15m timeframe = good balance between noise & speed
+CANDLE_LIMIT = 100              # Number of candles to fetch for analysis
 
 # RSI Settings (unchanged - these work well)
 RSI_PERIOD = 14
@@ -83,7 +83,7 @@ SUPERTREND_PERIOD = 10
 SUPERTREND_MULTIPLIER = 3.0
 
 # Minimum signal confluence score (out of 3)
-# Higher = more selective = fewer but better quality trades
+# Higher = more selective = fewer but higher quality trades
 MIN_SIGNAL_SCORE = 2
 
 # =============================================================================
